@@ -59,6 +59,48 @@ router.post('/receivejson',(req,res)=>{
     //res.render('/public/cs3282/redirected',{root: __dirname});
 });
 
+router.post('/mousejson',(req,res)=>{
+
+    let objRead = JSON.parse(fs.readFileSync(__dirname+'/../public/jshggamify/savedJSON/mousejson.json').toString());
+    console.log("Read",objRead);
+    var k;
+    if(req.body.data <= 15){
+        k = 0;
+    } else if(req.body.data <= 40){
+        k = 1;
+    } else if(req.body.data <= 65){
+        k = 2;
+    } else {
+        k = 3;
+    }
+    var obj = {day:objRead["deviations"].length+1,dev: req.body.data,stage: k};
+    // console.log("Print working directory:"+__dirname);
+    console.log(obj);
+    console.log("xyxyxyx");
+    objRead["deviations"].push(obj);
+    console.log("now",objRead);
+    fs.writeFileSync(__dirname+'/../public/jshggamify/savedJSON/mousejson.json',JSON.stringify(objRead),'utf8',()=>{
+        console.log('success');
+    });
+    var fields = ['day', 'dev', 'stage'];
+
+    try {
+        var result = json2csv({ data: objRead["deviations"], fields: fields });
+        console.log(result);
+        fs.writeFileSync(__dirname+'/../public/jshggamify/savedJSON/mousecsv.csv', result, function(err) {
+            if (err) throw err;
+            console.log('file saved');
+        });
+    } catch (err) {
+        // Errors are thrown for bad options, or if the data is empty and no fields are provided.
+        // Be sure to provide fields if it is possible that your data array will be empty.
+        console.error(err);
+    }
+    res.send(true);
+    //res.render('/public/cs3282/redirected',{root: __dirname});
+});
+
+
 function isLoggedIn(req,res,next) {
    if(req.isAuthenticated()){
       return next();

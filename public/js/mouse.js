@@ -47,12 +47,14 @@ $(function(){
             obj['data'].push(value);
          }
          localStorage.setItem('myStorage',JSON.stringify(obj));
-         
-         $.post('mousejson',{arr: obj},function() {
-            console.log("Written to JSON");
+         console.log("now sending post req");
+         $.post('/mousejson',{data: value},function(success){
+            if(success)
+                console.log(success);
+             console.log("Written to JSON");
          });
          
-         location.reload();
+         // location.reload();
          //console.log(obj);
     }
 
